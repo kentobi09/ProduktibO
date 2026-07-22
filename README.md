@@ -2,19 +2,29 @@
 
 > *"Produktib O? — It's productive, make every minute count."*
 
-**Produktib O?** (derived from the Tagalog word *produktibo* meaning *"It's productive!"* in a persuasive, affirming tone) is an aesthetic minimalist text launcher for Android designed to eliminate doomscrolling, reduce dopamine triggers, and maximize intentionality.
+[![Download APK](https://img.shields.io/badge/📥_Download_APK-v1.0.0-10B981?style=for-the-badge&logo=android&logoColor=white)](https://github.com/kentobi09/ProduktibO/releases/latest)
+
+[**👉 Click here to Download the latest Produktib O? APK (v1.0.0)**](https://github.com/kentobi09/ProduktibO/releases/download/v1.0.0/ProduktibO-v1.0.0.apk)
 
 ---
 
 ## ✨ Features
 
 - 📱 **Text-Only Minimalist Launcher**: Replaces loud, colorful app icons with clean, distraction-free typography.
-- 🛡️ **Anti-Doomscroll Social Shield**: Toggleable master filter that automatically suppresses high-friction social feeds (**TikTok, X/Twitter, Facebook, YouTube, Threads, Instagram, Snapchat, Reddit**).
+- 🛡️ **Anti-Doomscroll Social Shield**: Automatically suppresses high-friction social feeds (**TikTok, X/Twitter, Facebook, YouTube, Threads, Instagram, Snapchat, Reddit**).
 - 🎮 **Addictive Online Games Shield**: Auto-detects and suppresses high-dopamine mobile & online games (**Mobile Legends, Roblox, PUBG, Genshin, CoD Mobile, Free Fire**, and all Play Store game category apps).
 - 📜 **Plain Text Notifications**: Swiping down from the top reveals a quiet, monochrome notification list—no red badges, flashing cards, or distracting thumbnail previews.
 - 🔒 **Opt-In Double-Tap to Lock**: Enable in Settings to turn off your phone screen natively with a quick double-tap on empty space (`AccessibilityService`).
 - 🔋 **Immersive OLED UI**: Hides system clutter in edge-to-edge OLED dark mode with in-app battery percentage and time indicators.
 - 🔓 **Fail-Safe Launcher Reset**: Easily change or switch back to your stock launcher anytime directly inside **Settings** -> **Change / Reset Default Launcher**.
+
+---
+
+## 📥 Quick Download & Installation
+
+1. **Download APK**: Click the [**Download APK Badge**](https://github.com/kentobi09/ProduktibO/releases/download/v1.0.0/ProduktibO-v1.0.0.apk) above on your Android phone.
+2. **Install**: Tap the downloaded `.apk` file to install it.
+3. **Set Default**: Open **Produktib O?** and tap **Set Default** on the top banner to set it as your main home screen!
 
 ---
 
@@ -30,14 +40,14 @@
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Building from Source
 
 ### Prerequisites
 
 - [Android Studio](https://developer.android.com/studio) (Hedgehog, Iguana, or Ladybug recommended)
 - Android Device or Emulator running Android 8.0+
 
-### Installation
+### Steps
 
 1. **Clone the repository**:
    ```bash
@@ -50,7 +60,6 @@
 3. **Build and Run**:
    - Connect your Android device via USB (with USB Debugging enabled).
    - Click **Run ('app')** ▶ to compile and install on your phone.
-   - Tap **Set Default** on the home screen banner to select **Produktib O?** as your main launcher.
 
 ---
 
