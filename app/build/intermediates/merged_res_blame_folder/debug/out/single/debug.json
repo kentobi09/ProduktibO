@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "C:\\Users\\LENOVO\\.gradle\\daemon\\9.0-milestone-1\\com.produktibo.launcher.app-merged_res-4:\\xml_accessibility_service_config.xml.flat",
+        "source": "C:\\Users\\LENOVO\\.gradle\\daemon\\9.0-milestone-1\\com.produktibo.launcher.app-main-6:\\xml\\accessibility_service_config.xml"
+    },
+    {
+        "merged": "com.produktibo.launcher.app-merged_res-4:/drawable_ic_launcher.xml.flat",
+        "source": "com.produktibo.launcher.app-main-6:/drawable/ic_launcher.xml"
+    }
+]

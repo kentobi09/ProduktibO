@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Produktib O?</string>
+    <string name="accessibility_service_description">Allows double-tapping on empty space on the home screen to lock your device screen instantly.</string>
+</resources>

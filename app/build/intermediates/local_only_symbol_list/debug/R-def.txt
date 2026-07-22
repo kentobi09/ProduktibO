@@ -1,0 +1,12 @@
+R_DEF: Internal format may change without notice
+local
+color black
+color gray_border
+color gray_dark
+color gray_text_muted
+color white
+drawable ic_launcher
+string accessibility_service_description
+string app_name
+style Theme.ProduktibO
+xml accessibility_service_config
