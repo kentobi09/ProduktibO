@@ -77,11 +77,13 @@ fun HomeScreen(
     val coroutineScope = rememberCoroutineScope()
     val notifications by PlainNotificationService.notifications.collectAsState()
 
-    // Auto-fade letter indicator after 600ms when user stops scrolling
+    // Auto-fade letter indicator 700ms after scroll or touch ends
     LaunchedEffect(activeLetterIndicator) {
         if (activeLetterIndicator != null) {
-            delay(600)
-            activeLetterIndicator = null
+            delay(700)
+            if (!listState.isScrollInProgress) {
+                activeLetterIndicator = null
+            }
         }
     }
 
@@ -106,21 +108,17 @@ fun HomeScreen(
         }
     }
 
-    // Track letter of currently visible app at top of list while user scrolls main screen
-    val currentFirstVisibleLetter by remember {
-        derivedStateOf {
-            val visibleIndex = listState.firstVisibleItemIndex
-            if (visibleIndex in filteredApps.indices) {
-                filteredApps[visibleIndex].label.firstOrNull()?.uppercaseChar()
-            } else null
-        }
-    }
-
-    // Show fading letter indicator dynamically when user is scrolling the main screen
-    LaunchedEffect(currentFirstVisibleLetter, listState.isScrollInProgress) {
-        if (listState.isScrollInProgress && currentFirstVisibleLetter != null) {
-            activeLetterIndicator = currentFirstVisibleLetter
-        }
+    // SnapshotFlow: Continuously monitor scroll position and update center letter indicator
+    LaunchedEffect(listState, filteredApps) {
+        snapshotFlow { Pair(listState.firstVisibleItemIndex, listState.isScrollInProgress) }
+            .collect { (firstIndex, isScrolling) ->
+                if (isScrolling && firstIndex in filteredApps.indices) {
+                    val char = filteredApps[firstIndex].label.firstOrNull()?.uppercaseChar()
+                    if (char != null && char.isLetter()) {
+                        activeLetterIndicator = char
+                    }
+                }
+            }
     }
 
     // A-Z Alphabet Scroll Letter Map (letter -> first item index in filteredApps)
