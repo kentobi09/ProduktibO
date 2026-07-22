@@ -32,7 +32,7 @@ class PreferencesManager(private val context: Context) {
     }
 
     val doubleTapLockEnabled: Flow<Boolean> = context.dataStore.data.map { prefs ->
-        prefs[DOUBLE_TAP_LOCK_ENABLED] ?: false
+        prefs[DOUBLE_TAP_LOCK_ENABLED] ?: true
     }
 
     val minimalLockscreenEnabled: Flow<Boolean> = context.dataStore.data.map { prefs ->

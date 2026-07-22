@@ -11,6 +11,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.produktibo.launcher.service.DoubleTapLockService
 import com.produktibo.launcher.service.PlainNotificationService
 import com.produktibo.launcher.ui.theme.DarkSurface
 import com.produktibo.launcher.ui.theme.OledBlack
@@ -110,6 +112,14 @@ fun MinimalLockScreenContent(
         modifier = Modifier
             .fillMaxSize()
             .background(OledBlack)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onDoubleTap = {
+                        // Double tap empty space on lock screen turns off display natively
+                        DoubleTapLockService.instance?.lockScreen()
+                    }
+                )
+            }
             .pointerInput(Unit) {
                 detectVerticalDragGestures { _, dragAmount ->
                     if (dragAmount < -20) { // Swipe Up to Unlock
