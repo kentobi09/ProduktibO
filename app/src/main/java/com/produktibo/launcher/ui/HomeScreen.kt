@@ -9,19 +9,24 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,6 +39,7 @@ import com.produktibo.launcher.ui.theme.DarkSurface
 import com.produktibo.launcher.ui.theme.OledBlack
 import com.produktibo.launcher.ui.theme.TextMain
 import com.produktibo.launcher.ui.theme.TextMuted
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -61,6 +67,8 @@ fun HomeScreen(
     var showNotifSheet by remember { mutableStateOf(false) }
     var showAccessibilityDialog by remember { mutableStateOf(false) }
 
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
     val notifications by PlainNotificationService.notifications.collectAsState()
 
     // Live Ticker for Time & Battery Level
@@ -84,6 +92,20 @@ fun HomeScreen(
         }
     }
 
+    // A-Z Alphabet Scroll Letter Map (letter -> first item index in filteredApps)
+    val alphabetIndexMap = remember(filteredApps) {
+        val map = mutableMapOf<Char, Int>()
+        filteredApps.forEachIndexed { index, app ->
+            val firstChar = app.label.firstOrNull()?.uppercaseChar() ?: '#'
+            if (firstChar.isLetter() && !map.containsKey(firstChar)) {
+                map[firstChar] = index
+            }
+        }
+        map
+    }
+
+    val alphabetLetters = remember { ('A'..'Z').toList() }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -103,7 +125,7 @@ fun HomeScreen(
                 )
             }
             .pointerInput(Unit) {
-                detectVerticalDragGestures { change, dragAmount ->
+                detectVerticalDragGestures { _, dragAmount ->
                     if (dragAmount > 15) {
                         MainActivity.collapseSystemStatusBar(context)
                         showNotifSheet = true
@@ -112,7 +134,7 @@ fun HomeScreen(
                     }
                 }
             }
-            .padding(horizontal = 24.dp, vertical = 28.dp)
+            .padding(horizontal = 24.dp, vertical = 24.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             
@@ -120,7 +142,7 @@ fun HomeScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 12.dp),
+                    .padding(bottom = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -139,42 +161,69 @@ fun HomeScreen(
                 )
             }
 
-            // Minimal Header Clock & Date
-            Spacer(modifier = Modifier.height(12.dp))
+            // Compact Clock & Compact Tagline
+            Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = currentTime,
-                fontSize = 58.sp,
+                fontSize = 54.sp,
                 fontWeight = FontWeight.Light,
                 color = TextMain
             )
-            Text(
-                text = currentDate,
-                fontSize = 16.sp,
-                color = TextMuted
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = "\"Produktib O? It's productive — make every minute count.\"",
-                fontSize = 12.sp,
-                color = TextMuted
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Instant Search Field
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                placeholder = { Text("Search apps...", color = TextMuted) },
-                singleLine = true,
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = TextMain,
-                    unfocusedBorderColor = TextMuted
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = currentDate,
+                    fontSize = 14.sp,
+                    color = TextMuted
                 )
-            )
+                Text(
+                    text = "It's productive",
+                    fontSize = 11.sp,
+                    color = TextMuted
+                )
+            }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Ultra-Thin Space-Saving Single Line Search Field
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp)
+            ) {
+                BasicTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    singleLine = true,
+                    textStyle = TextStyle(color = TextMain, fontSize = 15.sp),
+                    cursorBrush = SolidColor(TextMain),
+                    modifier = Modifier.fillMaxWidth(),
+                    decorationBox = { innerTextField ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 6.dp)
+                        ) {
+                            if (searchQuery.isEmpty()) {
+                                Text("Search apps...", color = TextMuted, fontSize = 15.sp)
+                            }
+                            innerTextField()
+                        }
+                    }
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(TextMuted)
+                        .align(Alignment.BottomCenter)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
 
             // App Drawer Text List Header
             Row(
@@ -184,16 +233,16 @@ fun HomeScreen(
             ) {
                 Text(
                     text = "APPLICATIONS",
-                    fontSize = 12.sp,
+                    fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     color = TextMuted
                 )
-                TextButton(onClick = onOpenSettings) {
+                TextButton(onClick = onOpenSettings, contentPadding = PaddingValues(0.dp)) {
                     Text("Settings", color = TextMain, fontSize = 12.sp)
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
             if (filteredApps.isEmpty()) {
                 Box(
@@ -209,28 +258,62 @@ fun HomeScreen(
                     )
                 }
             } else {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    items(filteredApps, key = { it.packageName }) { app ->
-                        Text(
-                            text = app.label,
-                            fontSize = 22.sp,
-                            fontWeight = FontWeight.Normal,
-                            color = TextMain,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .combinedClickable(
-                                    onClick = {
-                                        app.intent?.let { intent ->
-                                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                            context.startActivity(intent)
+                // Layout with Main App List + Right A-Z Alphabet Scroll Bar
+                Row(modifier = Modifier.fillMaxSize()) {
+                    LazyColumn(
+                        state = listState,
+                        verticalArrangement = Arrangement.spacedBy(14.dp),
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                    ) {
+                        itemsIndexed(filteredApps, key = { _, app -> app.packageName }) { index, app ->
+                            Text(
+                                text = app.label,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = TextMain,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .combinedClickable(
+                                        onClick = {
+                                            app.intent?.let { intent ->
+                                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                context.startActivity(intent)
+                                            }
+                                        }
+                                    )
+                                    .padding(vertical = 2.dp)
+                            )
+                        }
+                    }
+
+                    // A-Z Side Alphabet Fast-Scroll Bar
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .padding(start = 8.dp),
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        alphabetLetters.forEach { letter ->
+                            val isAvailable = alphabetIndexMap.containsKey(letter)
+                            Text(
+                                text = letter.toString(),
+                                fontSize = 9.sp,
+                                fontWeight = if (isAvailable) FontWeight.Bold else FontWeight.Normal,
+                                color = if (isAvailable) TextMain else TextMuted.copy(alpha = 0.3f),
+                                modifier = Modifier
+                                    .clickable(enabled = isAvailable) {
+                                        alphabetIndexMap[letter]?.let { targetIndex ->
+                                            coroutineScope.launch {
+                                                listState.scrollToItem(targetIndex)
+                                            }
                                         }
                                     }
-                                )
-                                .padding(vertical = 4.dp)
-                        )
+                                    .padding(vertical = 1.dp, horizontal = 2.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -332,7 +415,7 @@ fun HomeScreen(
                                 .fillMaxWidth()
                                 .heightIn(max = 340.dp)
                         ) {
-                            items(notifications, key = { it.id }) { notif ->
+                            itemsIndexed(notifications, key = { _, notif -> notif.id }) { _, notif ->
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()

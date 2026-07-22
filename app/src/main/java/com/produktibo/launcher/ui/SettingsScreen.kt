@@ -3,7 +3,9 @@ package com.produktibo.launcher.ui
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,6 +16,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,12 +40,26 @@ fun SettingsScreen(
     onToggleGamesShield: (Boolean) -> Unit,
     onToggleDoubleTapLock: (Boolean) -> Unit,
     onToggleMinimalLockscreen: (Boolean) -> Unit,
-    onToggleHideApp: (String) -> Unit,
+    onToggleAppVisibility: (String, Boolean) -> Unit,
     onRequestSetDefault: () -> Unit,
     onBack: () -> Unit
 ) {
     val isDefault = isDefaultLauncher(context)
     var showAccessibilityDialog by remember { mutableStateOf(false) }
+    var settingsSearchQuery by remember { mutableStateOf("") }
+
+    // Hardware Back Button & System Back Gesture (Tecno Pova / Android System Back)
+    BackHandler {
+        onBack()
+    }
+
+    val filteredSettingsApps = remember(appList, settingsSearchQuery) {
+        if (settingsSearchQuery.isEmpty()) {
+            appList
+        } else {
+            appList.filter { it.label.contains(settingsSearchQuery, ignoreCase = true) }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -50,6 +67,14 @@ fun SettingsScreen(
             .background(OledBlack)
             .windowInsetsPadding(WindowInsets.statusBars)
             .windowInsetsPadding(WindowInsets.navigationBars)
+            // Edge Swipe-to-Back Gesture
+            .pointerInput(Unit) {
+                detectHorizontalDragGestures { _, dragAmount ->
+                    if (dragAmount > 25) { // Swipe from Left to Right to Back
+                        onBack()
+                    }
+                }
+            }
             .padding(horizontal = 24.dp, vertical = 20.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -212,7 +237,7 @@ fun SettingsScreen(
                     }
                 }
 
-                // Section 4: Minimalist Lock Screen Overlay Toggle (v1.1.0 Feature)
+                // Section 4: Minimalist Lock Screen Overlay Toggle
                 item {
                     Card(
                         colors = CardDefaults.cardColors(containerColor = DarkSurface),
@@ -270,7 +295,7 @@ fun SettingsScreen(
                                     fontSize = 14.sp
                                 )
                                 Text(
-                                    text = "Double-tap empty space on home screen to turn off display",
+                                    text = "Double-tap empty space on home screen or lock screen to turn off display",
                                     fontSize = 12.sp,
                                     color = TextMuted,
                                     modifier = Modifier.padding(top = 2.dp)
@@ -289,21 +314,38 @@ fun SettingsScreen(
                     }
                 }
 
-                // Section 6: Custom App Visibility List Header
+                // Section 6: CHOOSE APPS TO DISPLAY Header & Instant Search
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "CUSTOM APP VISIBILITY",
+                        text = "CHOOSE APPS TO SHOW ON HOME SCREEN",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         letterSpacing = 0.5.sp,
                         color = TextMuted
                     )
+                    Text(
+                        text = "Check the apps you want visible on your minimalist launcher drawer.",
+                        fontSize = 11.sp,
+                        color = TextMuted,
+                        modifier = Modifier.padding(top = 2.dp, bottom = 8.dp)
+                    )
+                    OutlinedTextField(
+                        value = settingsSearchQuery,
+                        onValueChange = { settingsSearchQuery = it },
+                        placeholder = { Text("Search apps in settings...", color = TextMuted) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = TextMain,
+                            unfocusedBorderColor = TextMuted
+                        )
+                    )
                 }
 
-                // Individual Apps Visibility List
-                items(appList, key = { it.packageName }) { app ->
-                    val isHidden = hiddenApps.contains(app.packageName)
+                // Individual Apps Visibility Choice List (Opt-in Checkboxes)
+                items(filteredSettingsApps, key = { it.packageName }) { app ->
+                    val isVisibleOnHomeScreen = !hiddenApps.contains(app.packageName)
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -311,7 +353,7 @@ fun SettingsScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Column {
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(text = app.label, color = TextMain, fontSize = 16.sp)
                             if (app.isSocialMedia) {
                                 Text(text = "Social Doomscroll Tag", color = TextMuted, fontSize = 11.sp)
@@ -320,8 +362,10 @@ fun SettingsScreen(
                             }
                         }
                         Checkbox(
-                            checked = !isHidden,
-                            onCheckedChange = { onToggleHideApp(app.packageName) }
+                            checked = isVisibleOnHomeScreen,
+                            onCheckedChange = { isChecked ->
+                                onToggleAppVisibility(app.packageName, isVisibleOnHomeScreen)
+                            }
                         )
                     }
                 }

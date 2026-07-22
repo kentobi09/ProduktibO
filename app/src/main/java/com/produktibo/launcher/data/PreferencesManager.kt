@@ -20,6 +20,7 @@ class PreferencesManager(private val context: Context) {
         val HAS_PROMPTED_DEFAULT_LAUNCHER = booleanPreferencesKey("has_prompted_default_launcher")
         val TIME_FORMAT = stringPreferencesKey("time_format") // "24" or "12"
         val THEME_MODE = stringPreferencesKey("theme_mode") // "oled", "paper", "slate"
+        val VISIBLE_APPS_CSV = stringPreferencesKey("visible_apps_csv")
         val HIDDEN_APPS_CSV = stringPreferencesKey("hidden_apps_csv")
     }
 
@@ -51,6 +52,7 @@ class PreferencesManager(private val context: Context) {
         prefs[THEME_MODE] ?: "oled"
     }
 
+    // Set of explicitly disabled/hidden app package names
     val hiddenAppsSet: Flow<Set<String>> = context.dataStore.data.map { prefs ->
         val csv = prefs[HIDDEN_APPS_CSV] ?: ""
         if (csv.isEmpty()) emptySet() else csv.split(",").toSet()
@@ -98,15 +100,17 @@ class PreferencesManager(private val context: Context) {
         }
     }
 
-    suspend fun toggleHideApp(packageName: String) {
+    suspend fun toggleAppVisibility(packageName: String, isCurrentlyVisible: Boolean) {
         context.dataStore.edit { prefs ->
-            val current = (prefs[HIDDEN_APPS_CSV] ?: "").split(",").filter { it.isNotEmpty() }.toMutableSet()
-            if (current.contains(packageName)) {
-                current.remove(packageName)
+            val hiddenSet = (prefs[HIDDEN_APPS_CSV] ?: "").split(",").filter { it.isNotEmpty() }.toMutableSet()
+            if (isCurrentlyVisible) {
+                // User unchecks -> add to hidden set
+                hiddenSet.add(packageName)
             } else {
-                current.add(packageName)
+                // User checks -> remove from hidden set so it becomes visible
+                hiddenSet.remove(packageName)
             }
-            prefs[HIDDEN_APPS_CSV] = current.joinToString(",")
+            prefs[HIDDEN_APPS_CSV] = hiddenSet.joinToString(",")
         }
     }
 }

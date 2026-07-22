@@ -108,8 +108,8 @@ class MainActivity : ComponentActivity() {
                             onToggleMinimalLockscreen = { enabled ->
                                 lifecycleScope.launch { prefsManager.setMinimalLockscreenEnabled(enabled) }
                             },
-                            onToggleHideApp = { pkg ->
-                                lifecycleScope.launch { prefsManager.toggleHideApp(pkg) }
+                            onToggleAppVisibility = { pkg, isCurrentlyVisible ->
+                                lifecycleScope.launch { prefsManager.toggleAppVisibility(pkg, isCurrentlyVisible) }
                             },
                             onRequestSetDefault = { requestDefaultHomeLauncher() },
                             onBack = { isSettingsOpen = false }
