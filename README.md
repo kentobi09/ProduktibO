@@ -2,23 +2,24 @@
   <img src="logo.png" width="128" alt="Produktib O? Logo" />
 </p>
 
-# Produktib O? — Minimalist Home Launcher for Android
+# Produktib O? — Minimalist Text Launcher & Lock Screen for Android
 
 > *"Produktib O? — It's productive, make every minute count."*
 
-[![Download APK](https://img.shields.io/badge/📥_Download_APK-v1.0.0-10B981?style=for-the-badge&logo=android&logoColor=white)](https://github.com/kentobi09/ProduktibO/releases/latest)
+[![Download APK](https://img.shields.io/badge/📥_Download_APK-v1.1.0-10B981?style=for-the-badge&logo=android&logoColor=white)](https://github.com/kentobi09/ProduktibO/releases/latest)
 
-[**👉 Click here to Download the latest Produktib O? APK (v1.0.0)**](https://github.com/kentobi09/ProduktibO/releases/download/v1.0.0/ProduktibO-v1.0.0.apk)
+[**👉 Click here to Download the latest Produktib O? APK (v1.1.0)**](https://github.com/kentobi09/ProduktibO/releases/download/v1.1.0/ProduktibO-v1.1.0.apk)
 
 ---
 
 ## ✨ Features
 
 - 📱 **Text-Only Minimalist Launcher**: Replaces loud, colorful app icons with clean, distraction-free typography.
+- 🔒 **Minimal OLED Lock Screen Overlay**: Pitch-black OLED clock (`72.sp`), date, battery, and quiet text notifications over your lock screen with swipe-up unlock.
 - 🛡️ **Anti-Doomscroll Social Shield**: Automatically suppresses high-friction social feeds (**TikTok, X/Twitter, Facebook, YouTube, Threads, Instagram, Snapchat, Reddit**).
 - 🎮 **Addictive Online Games Shield**: Auto-detects and suppresses high-dopamine mobile & online games (**Mobile Legends, Roblox, PUBG, Genshin, CoD Mobile, Free Fire**, and all Play Store game category apps).
-- 📜 **Plain Text Notifications**: Swiping down from the top reveals a quiet, monochrome notification list—no red badges, flashing cards, or distracting thumbnail previews.
-- 🔒 **Opt-In Double-Tap to Lock**: Enable in Settings to turn off your phone screen natively with a quick double-tap on empty space (`AccessibilityService`).
+- 📜 **Quiet Text Notifications**: Swiping down reveals a quiet, monochrome notification list—no red badges, flashing cards, or distracting thumbnail previews.
+- 👆 **Double-Tap Screen Lock**: Turn off your phone screen natively by double-tapping empty space (`AccessibilityService`), enabled by default.
 - 🔋 **Immersive OLED UI**: Hides system clutter in edge-to-edge OLED dark mode with in-app battery percentage and time indicators.
 - 🔓 **Fail-Safe Launcher Reset**: Easily change or switch back to your stock launcher anytime directly inside **Settings** -> **Change / Reset Default Launcher**.
 
@@ -26,7 +27,7 @@
 
 ## 📥 Quick Download & Installation
 
-1. **Download APK**: Click the [**Download APK Badge**](https://github.com/kentobi09/ProduktibO/releases/download/v1.0.0/ProduktibO-v1.0.0.apk) above on your Android phone.
+1. **Download APK**: Click the [**Download APK Badge**](https://github.com/kentobi09/ProduktibO/releases/download/v1.1.0/ProduktibO-v1.1.0.apk) above on your Android phone.
 2. **Install**: Tap the downloaded `.apk` file to install it.
 3. **Set Default**: Open **Produktib O?** and respond to the one-time system default prompt, or configure anytime in Settings.
 
