@@ -59,9 +59,3 @@
 - **`AccessibilityService`** *(Optional)*: Used exclusively for locking the screen upon double-tapping empty space.
 - **`NotificationListenerService`** *(Optional)*: Used to parse incoming notifications into quiet, plain-text alerts.
 - **`QUERY_ALL_PACKAGES`**: Required to display installed applications in the minimalist text drawer.
-
----
-
-## 📄 License
-
-Distributed under the MIT License. See `LICENSE` for details.
