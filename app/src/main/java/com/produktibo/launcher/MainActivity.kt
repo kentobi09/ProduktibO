@@ -81,6 +81,7 @@ class MainActivity : ComponentActivity() {
                     val autoHideGames by prefsManager.autoHideGames.collectAsState(initial = true)
                     val doubleTapLockEnabled by prefsManager.doubleTapLockEnabled.collectAsState(initial = false)
                     val minimalLockscreenEnabled by prefsManager.minimalLockscreenEnabled.collectAsState(initial = false)
+                    val hasCompletedOnboarding by prefsManager.hasCompletedOnboarding.collectAsState(initial = true)
                     val hiddenApps by prefsManager.hiddenAppsSet.collectAsState(initial = emptySet())
 
                     LaunchedEffect(Unit) {
@@ -121,7 +122,14 @@ class MainActivity : ComponentActivity() {
                             autoHideSocial = autoHideSocial,
                             autoHideGames = autoHideGames,
                             doubleTapLockEnabled = doubleTapLockEnabled,
+                            hasCompletedOnboarding = hasCompletedOnboarding,
                             hiddenApps = hiddenApps,
+                            onSaveOnboardingSelection = { hiddenSet ->
+                                lifecycleScope.launch {
+                                    prefsManager.setBulkHiddenApps(hiddenSet)
+                                    prefsManager.setHasCompletedOnboarding(true)
+                                }
+                            },
                             onOpenSettings = { isSettingsOpen = true }
                         )
                     }

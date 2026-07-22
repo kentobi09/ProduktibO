@@ -18,9 +18,9 @@ class PreferencesManager(private val context: Context) {
         val DOUBLE_TAP_LOCK_ENABLED = booleanPreferencesKey("double_tap_lock_enabled")
         val MINIMAL_LOCKSCREEN_ENABLED = booleanPreferencesKey("minimal_lockscreen_enabled")
         val HAS_PROMPTED_DEFAULT_LAUNCHER = booleanPreferencesKey("has_prompted_default_launcher")
+        val HAS_COMPLETED_ONBOARDING = booleanPreferencesKey("has_completed_onboarding")
         val TIME_FORMAT = stringPreferencesKey("time_format") // "24" or "12"
         val THEME_MODE = stringPreferencesKey("theme_mode") // "oled", "paper", "slate"
-        val VISIBLE_APPS_CSV = stringPreferencesKey("visible_apps_csv")
         val HIDDEN_APPS_CSV = stringPreferencesKey("hidden_apps_csv")
     }
 
@@ -42,6 +42,10 @@ class PreferencesManager(private val context: Context) {
 
     val hasPromptedDefaultLauncher: Flow<Boolean> = context.dataStore.data.map { prefs ->
         prefs[HAS_PROMPTED_DEFAULT_LAUNCHER] ?: false
+    }
+
+    val hasCompletedOnboarding: Flow<Boolean> = context.dataStore.data.map { prefs ->
+        prefs[HAS_COMPLETED_ONBOARDING] ?: false
     }
 
     val timeFormat: Flow<String> = context.dataStore.data.map { prefs ->
@@ -88,6 +92,12 @@ class PreferencesManager(private val context: Context) {
         }
     }
 
+    suspend fun setHasCompletedOnboarding(completed: Boolean) {
+        context.dataStore.edit { prefs ->
+            prefs[HAS_COMPLETED_ONBOARDING] = completed
+        }
+    }
+
     suspend fun setTimeFormat(format: String) {
         context.dataStore.edit { prefs ->
             prefs[TIME_FORMAT] = format
@@ -104,13 +114,17 @@ class PreferencesManager(private val context: Context) {
         context.dataStore.edit { prefs ->
             val hiddenSet = (prefs[HIDDEN_APPS_CSV] ?: "").split(",").filter { it.isNotEmpty() }.toMutableSet()
             if (isCurrentlyVisible) {
-                // User unchecks -> add to hidden set
                 hiddenSet.add(packageName)
             } else {
-                // User checks -> remove from hidden set so it becomes visible
                 hiddenSet.remove(packageName)
             }
             prefs[HIDDEN_APPS_CSV] = hiddenSet.joinToString(",")
+        }
+    }
+
+    suspend fun setBulkHiddenApps(hiddenPackageNames: Set<String>) {
+        context.dataStore.edit { prefs ->
+            prefs[HIDDEN_APPS_CSV] = hiddenPackageNames.joinToString(",")
         }
     }
 }

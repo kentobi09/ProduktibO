@@ -39,6 +39,7 @@ import com.produktibo.launcher.ui.theme.DarkSurface
 import com.produktibo.launcher.ui.theme.OledBlack
 import com.produktibo.launcher.ui.theme.TextMain
 import com.produktibo.launcher.ui.theme.TextMuted
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -57,7 +58,9 @@ fun HomeScreen(
     autoHideSocial: Boolean,
     autoHideGames: Boolean,
     doubleTapLockEnabled: Boolean,
+    hasCompletedOnboarding: Boolean,
     hiddenApps: Set<String>,
+    onSaveOnboardingSelection: (Set<String>) -> Unit,
     onOpenSettings: () -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
@@ -66,10 +69,19 @@ fun HomeScreen(
     var batteryPercentage by remember { mutableStateOf(getBatteryLevel(context)) }
     var showNotifSheet by remember { mutableStateOf(false) }
     var showAccessibilityDialog by remember { mutableStateOf(false) }
+    var activeLetterIndicator by remember { mutableStateOf<Char?>(null) }
 
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val notifications by PlainNotificationService.notifications.collectAsState()
+
+    // Auto-fade letter indicator after 800ms
+    LaunchedEffect(activeLetterIndicator) {
+        if (activeLetterIndicator != null) {
+            delay(800)
+            activeLetterIndicator = null
+        }
+    }
 
     // Live Ticker for Time & Battery Level
     LaunchedEffect(Unit) {
@@ -77,7 +89,7 @@ fun HomeScreen(
             currentTime = getFormattedTime()
             currentDate = getFormattedDate()
             batteryPercentage = getBatteryLevel(context)
-            kotlinx.coroutines.delay(2000)
+            delay(2000)
         }
     }
 
@@ -267,7 +279,7 @@ fun HomeScreen(
                             .weight(1f)
                             .fillMaxHeight()
                     ) {
-                        itemsIndexed(filteredApps, key = { _, app -> app.packageName }) { index, app ->
+                        itemsIndexed(filteredApps, key = { _, app -> app.packageName }) { _, app ->
                             Text(
                                 text = app.label,
                                 fontSize = 20.sp,
@@ -306,6 +318,7 @@ fun HomeScreen(
                                 modifier = Modifier
                                     .clickable(enabled = isAvailable) {
                                         alphabetIndexMap[letter]?.let { targetIndex ->
+                                            activeLetterIndicator = letter
                                             coroutineScope.launch {
                                                 listState.scrollToItem(targetIndex)
                                             }
@@ -315,6 +328,32 @@ fun HomeScreen(
                             )
                         }
                     }
+                }
+            }
+        }
+
+        // Center Floating Fading Letter Indicator (A-Z Scroll Indicator)
+        AnimatedVisibility(
+            visible = activeLetterIndicator != null,
+            enter = fadeIn() + scaleIn(),
+            exit = fadeOut() + scaleOut(),
+            modifier = Modifier.align(Alignment.Center)
+        ) {
+            Surface(
+                color = DarkSurface.copy(alpha = 0.92f),
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier
+                    .size(90.dp)
+                    .border(1.dp, TextMuted, RoundedCornerShape(20.dp))
+                    .shadow(12.dp, RoundedCornerShape(20.dp))
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Text(
+                        text = activeLetterIndicator?.toString() ?: "",
+                        fontSize = 44.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TextMain
+                    )
                 }
             }
         }
@@ -464,6 +503,19 @@ fun HomeScreen(
         }
     }
 
+    // First-Install App Selection Onboarding Dialog
+    if (!hasCompletedOnboarding) {
+        OnboardingAppSelectionDialog(
+            appList = appList,
+            initialHiddenApps = hiddenApps,
+            onConfirm = { selectedVisibleApps ->
+                val allPackageNames = appList.map { it.packageName }.toSet()
+                val hiddenSet = allPackageNames - selectedVisibleApps
+                onSaveOnboardingSelection(hiddenSet)
+            }
+        )
+    }
+
     if (showAccessibilityDialog) {
         AlertDialog(
             onDismissRequest = { showAccessibilityDialog = false },
@@ -496,6 +548,118 @@ fun HomeScreen(
             containerColor = DarkSurface
         )
     }
+}
+
+@Composable
+fun OnboardingAppSelectionDialog(
+    appList: List<AppInfo>,
+    initialHiddenApps: Set<String>,
+    onConfirm: (Set<String>) -> Unit
+) {
+    var searchQuery by remember { mutableStateOf("") }
+    val selectedPackages = remember(appList, initialHiddenApps) {
+        mutableStateListOf<String>().apply {
+            val visibleInitial = appList.map { it.packageName }.filter { !initialHiddenApps.contains(it) }
+            addAll(visibleInitial)
+        }
+    }
+
+    val filteredApps = remember(appList, searchQuery) {
+        if (searchQuery.isEmpty()) appList else appList.filter { it.label.contains(searchQuery, ignoreCase = true) }
+    }
+
+    AlertDialog(
+        onDismissRequest = { /* Force user selection once on first install */ },
+        title = {
+            Column {
+                Text(text = "Choose Apps to Show", fontWeight = FontWeight.Bold, color = TextMain, fontSize = 18.sp)
+                Text(
+                    text = "Select which apps to show in your minimalist launcher drawer.",
+                    fontSize = 12.sp,
+                    color = TextMuted,
+                    modifier = Modifier.padding(top = 2.dp)
+                )
+            }
+        },
+        text = {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    placeholder = { Text("Search apps...", color = TextMuted, fontSize = 13.sp) },
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = TextMain,
+                        unfocusedBorderColor = TextMuted
+                    )
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    TextButton(
+                        onClick = {
+                            selectedPackages.clear()
+                            selectedPackages.addAll(appList.map { it.packageName })
+                        },
+                        contentPadding = PaddingValues(0.dp)
+                    ) {
+                        Text("Select All", fontSize = 11.sp, color = TextMain)
+                    }
+                    TextButton(
+                        onClick = { selectedPackages.clear() },
+                        contentPadding = PaddingValues(0.dp)
+                    ) {
+                        Text("Deselect All", fontSize = 11.sp, color = TextMuted)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(260.dp)
+                ) {
+                    itemsIndexed(filteredApps, key = { _, app -> app.packageName }) { _, app ->
+                        val isSelected = selectedPackages.contains(app.packageName)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    if (isSelected) selectedPackages.remove(app.packageName) else selectedPackages.add(app.packageName)
+                                }
+                                .padding(vertical = 2.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = app.label, color = TextMain, fontSize = 14.sp)
+                            Checkbox(
+                                checked = isSelected,
+                                onCheckedChange = { checked ->
+                                    if (checked) selectedPackages.add(app.packageName) else selectedPackages.remove(app.packageName)
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { onConfirm(selectedPackages.toSet()) },
+                colors = ButtonDefaults.buttonColors(containerColor = TextMain, contentColor = OledBlack)
+            ) {
+                Text("Save & Continue", fontWeight = FontWeight.Bold)
+            }
+        },
+        containerColor = DarkSurface
+    )
 }
 
 private fun getRelativeTimeString(timestamp: Long): String {
