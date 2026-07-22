@@ -2,41 +2,54 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Permissions required for Launcher, Usage Stats & Notifications -->
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="QueryAllPackagesPermission" />
-    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ProduktibO">
+        android:theme="@style/Theme.ProduktibO"
+        tools:targetApi="31">
 
         <!-- Main Home Launcher Activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTask"
-            android:clearTaskOnLaunch="true"
             android:stateNotNeeded="true"
             android:theme="@style/Theme.ProduktibO">
-            
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- Dummy Activity Alias used to reset default home launcher association -->
+        <!-- Minimal OLED Lock Screen Activity -->
+        <activity
+            android:name=".ui.LockScreenActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.ProduktibO"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true" />
+
+        <!-- Fake Alias to force Android OS to clear default home launcher association -->
         <activity-alias
             android:name=".FakeHomeAlias"
-            android:targetActivity=".MainActivity"
             android:enabled="false"
-            android:exported="true">
+            android:exported="true"
+            android:targetActivity=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.HOME" />
@@ -55,11 +68,11 @@
             </intent-filter>
         </service>
 
-        <!-- Double-Tap Screen Off Accessibility Service -->
+        <!-- Accessibility Service for Double-Tap Screen Lock -->
         <service
             android:name=".service.DoubleTapLockService"
-            android:label="Produktib O? Screen Lock"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:label="Produktib O? Screen Lock"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />

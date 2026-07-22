@@ -5,6 +5,7 @@ import android.app.role.RoleManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -25,6 +26,7 @@ import androidx.lifecycle.lifecycleScope
 import com.produktibo.launcher.data.AppInfo
 import com.produktibo.launcher.data.AppRepository
 import com.produktibo.launcher.data.PreferencesManager
+import com.produktibo.launcher.service.ScreenStateReceiver
 import com.produktibo.launcher.ui.HomeScreen
 import com.produktibo.launcher.ui.SettingsScreen
 import com.produktibo.launcher.ui.isDefaultLauncher
@@ -37,6 +39,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var appRepository: AppRepository
     private lateinit var prefsManager: PreferencesManager
+    private var screenStateReceiver: ScreenStateReceiver? = null
 
     private val defaultHomeLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -52,6 +55,9 @@ class MainActivity : ComponentActivity() {
 
         appRepository = AppRepository(this)
         prefsManager = PreferencesManager(this)
+
+        // Register screen state receiver for minimal lock screen overlay
+        registerScreenStateReceiver()
 
         // Check if first-time launch prompt is needed
         lifecycleScope.launch {
@@ -74,6 +80,7 @@ class MainActivity : ComponentActivity() {
                     val autoHideSocial by prefsManager.autoHideSocial.collectAsState(initial = true)
                     val autoHideGames by prefsManager.autoHideGames.collectAsState(initial = true)
                     val doubleTapLockEnabled by prefsManager.doubleTapLockEnabled.collectAsState(initial = false)
+                    val minimalLockscreenEnabled by prefsManager.minimalLockscreenEnabled.collectAsState(initial = false)
                     val hiddenApps by prefsManager.hiddenAppsSet.collectAsState(initial = emptySet())
 
                     LaunchedEffect(Unit) {
@@ -87,6 +94,7 @@ class MainActivity : ComponentActivity() {
                             autoHideSocial = autoHideSocial,
                             autoHideGames = autoHideGames,
                             doubleTapLockEnabled = doubleTapLockEnabled,
+                            minimalLockscreenEnabled = minimalLockscreenEnabled,
                             hiddenApps = hiddenApps,
                             onToggleSocialShield = { enabled ->
                                 lifecycleScope.launch { prefsManager.setAutoHideSocial(enabled) }
@@ -96,6 +104,9 @@ class MainActivity : ComponentActivity() {
                             },
                             onToggleDoubleTapLock = { enabled ->
                                 lifecycleScope.launch { prefsManager.setDoubleTapLockEnabled(enabled) }
+                            },
+                            onToggleMinimalLockscreen = { enabled ->
+                                lifecycleScope.launch { prefsManager.setMinimalLockscreenEnabled(enabled) }
                             },
                             onToggleHideApp = { pkg ->
                                 lifecycleScope.launch { prefsManager.toggleHideApp(pkg) }
@@ -115,6 +126,30 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
+            }
+        }
+    }
+
+    private fun registerScreenStateReceiver() {
+        try {
+            screenStateReceiver = ScreenStateReceiver()
+            val filter = IntentFilter().apply {
+                addAction(Intent.ACTION_SCREEN_OFF)
+                addAction(Intent.ACTION_SCREEN_ON)
+            }
+            registerReceiver(screenStateReceiver, filter)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        screenStateReceiver?.let {
+            try {
+                unregisterReceiver(it)
+            } catch (e: Exception) {
+                // Ignore
             }
         }
     }

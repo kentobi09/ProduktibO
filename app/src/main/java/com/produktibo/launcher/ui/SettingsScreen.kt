@@ -31,10 +31,12 @@ fun SettingsScreen(
     autoHideSocial: Boolean,
     autoHideGames: Boolean,
     doubleTapLockEnabled: Boolean,
+    minimalLockscreenEnabled: Boolean,
     hiddenApps: Set<String>,
     onToggleSocialShield: (Boolean) -> Unit,
     onToggleGamesShield: (Boolean) -> Unit,
     onToggleDoubleTapLock: (Boolean) -> Unit,
+    onToggleMinimalLockscreen: (Boolean) -> Unit,
     onToggleHideApp: (String) -> Unit,
     onRequestSetDefault: () -> Unit,
     onBack: () -> Unit
@@ -174,7 +176,7 @@ fun SettingsScreen(
                     }
                 }
 
-                // Section 3: Master Games Shield Toggle (NEW)
+                // Section 3: Master Games Shield Toggle
                 item {
                     Card(
                         colors = CardDefaults.cardColors(containerColor = DarkSurface),
@@ -210,7 +212,43 @@ fun SettingsScreen(
                     }
                 }
 
-                // Section 4: Double-Tap to Lock Screen Toggle
+                // Section 4: Minimalist Lock Screen Overlay Toggle (v1.1.0 Feature)
+                item {
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = DarkSurface),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Minimal OLED Lock Screen",
+                                    fontWeight = FontWeight.Medium,
+                                    color = TextMain,
+                                    fontSize = 14.sp
+                                )
+                                Text(
+                                    text = "Replaces stock lock screen notifications with a quiet, pitch-black OLED clock & plain notifications",
+                                    fontSize = 12.sp,
+                                    color = TextMuted,
+                                    modifier = Modifier.padding(top = 2.dp)
+                                )
+                            }
+                            Switch(
+                                checked = minimalLockscreenEnabled,
+                                onCheckedChange = onToggleMinimalLockscreen
+                            )
+                        }
+                    }
+                }
+
+                // Section 5: Double-Tap to Lock Screen Toggle
                 item {
                     Card(
                         colors = CardDefaults.cardColors(containerColor = DarkSurface),
@@ -251,7 +289,7 @@ fun SettingsScreen(
                     }
                 }
 
-                // Section 5: Custom App Visibility List Header
+                // Section 6: Custom App Visibility List Header
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(

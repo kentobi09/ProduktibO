@@ -16,6 +16,7 @@ class PreferencesManager(private val context: Context) {
         val AUTO_HIDE_SOCIAL = booleanPreferencesKey("auto_hide_social")
         val AUTO_HIDE_GAMES = booleanPreferencesKey("auto_hide_games")
         val DOUBLE_TAP_LOCK_ENABLED = booleanPreferencesKey("double_tap_lock_enabled")
+        val MINIMAL_LOCKSCREEN_ENABLED = booleanPreferencesKey("minimal_lockscreen_enabled")
         val HAS_PROMPTED_DEFAULT_LAUNCHER = booleanPreferencesKey("has_prompted_default_launcher")
         val TIME_FORMAT = stringPreferencesKey("time_format") // "24" or "12"
         val THEME_MODE = stringPreferencesKey("theme_mode") // "oled", "paper", "slate"
@@ -32,6 +33,10 @@ class PreferencesManager(private val context: Context) {
 
     val doubleTapLockEnabled: Flow<Boolean> = context.dataStore.data.map { prefs ->
         prefs[DOUBLE_TAP_LOCK_ENABLED] ?: false
+    }
+
+    val minimalLockscreenEnabled: Flow<Boolean> = context.dataStore.data.map { prefs ->
+        prefs[MINIMAL_LOCKSCREEN_ENABLED] ?: false
     }
 
     val hasPromptedDefaultLauncher: Flow<Boolean> = context.dataStore.data.map { prefs ->
@@ -66,6 +71,12 @@ class PreferencesManager(private val context: Context) {
     suspend fun setDoubleTapLockEnabled(enabled: Boolean) {
         context.dataStore.edit { prefs ->
             prefs[DOUBLE_TAP_LOCK_ENABLED] = enabled
+        }
+    }
+
+    suspend fun setMinimalLockscreenEnabled(enabled: Boolean) {
+        context.dataStore.edit { prefs ->
+            prefs[MINIMAL_LOCKSCREEN_ENABLED] = enabled
         }
     }
 
