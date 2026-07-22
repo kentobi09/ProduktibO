@@ -1,5 +1,6 @@
 package com.produktibo.launcher.service
 
+import android.content.Intent
 import android.content.IntentFilter
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
