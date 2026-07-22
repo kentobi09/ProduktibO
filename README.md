@@ -2,7 +2,7 @@
 
 > *"Produktib O? — It's productive, make every minute count."*
 
-**Produktib O?** (derived from the Tagalog word *produktibo* meaning *"It's productive!"* in a persuasive, affirming tone) is an aesthetic minimalist text launcher for Android designed to eliminate doomscrolling, reduce dopamine triggers, and maximize intentionality.
+**Produktib O?** (derived from the Tagalog word *produktibo oh?* meaning *"It's productive!"* in a persuasive, affirming tone) is an aesthetic minimalist text launcher for Android designed to eliminate doomscrolling, reduce dopamine triggers, and maximize intentionality.
 
 ---
 
