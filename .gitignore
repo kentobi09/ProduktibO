@@ -9,6 +9,7 @@
 /.idea/assetStudio.xml
 .DS_Store
 /build
+app/build/
 /captures
 .externalNativeBuild
 .cxx
