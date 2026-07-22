@@ -2,10 +2,12 @@ package com.produktibo.launcher.service
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Intent
-import android.os.Build
+import android.content.IntentFilter
 import android.view.accessibility.AccessibilityEvent
 
 class DoubleTapLockService : AccessibilityService() {
+
+    private var screenStateReceiver: ScreenStateReceiver? = null
 
     companion object {
         var instance: DoubleTapLockService? = null
@@ -15,20 +17,54 @@ class DoubleTapLockService : AccessibilityService() {
     override fun onServiceConnected() {
         super.onServiceConnected()
         instance = this
+        registerScreenStateReceiver()
     }
 
-    override fun onAccessibilityEvent(event: AccessibilityEvent?) {}
+    override fun onUnbind(intent: Intent?): Boolean {
+        instance = null
+        unregisterScreenStateReceiver()
+        return super.onUnbind(intent)
+    }
 
-    override fun onInterrupt() {}
+    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        // Not needed for lock action
+    }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onInterrupt() {
         instance = null
     }
 
     fun lockScreen() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        try {
             performGlobalAction(GLOBAL_ACTION_LOCK_SCREEN)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun registerScreenStateReceiver() {
+        try {
+            if (screenStateReceiver == null) {
+                screenStateReceiver = ScreenStateReceiver()
+                val filter = IntentFilter().apply {
+                    addAction(Intent.ACTION_SCREEN_OFF)
+                    addAction(Intent.ACTION_SCREEN_ON)
+                }
+                registerReceiver(screenStateReceiver, filter)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun unregisterScreenStateReceiver() {
+        screenStateReceiver?.let {
+            try {
+                unregisterReceiver(it)
+            } catch (e: Exception) {
+                // Ignore
+            }
+            screenStateReceiver = null
         }
     }
 }

@@ -2,9 +2,11 @@ package com.produktibo.launcher.ui
 
 import android.app.KeyguardManager
 import android.content.Context
+import android.content.Intent
 import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -64,14 +66,15 @@ class LockScreenActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
-        } else {
-            @Suppress("DEPRECATION")
-            window.addFlags(
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
-                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
-                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-            )
         }
+
+        @Suppress("DEPRECATION")
+        window.addFlags(
+            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED or
+                    WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                    WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
+                    WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+        )
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
@@ -96,6 +99,7 @@ fun MinimalLockScreenContent(
     var currentTime by remember { mutableStateOf(getFormattedTime()) }
     var currentDate by remember { mutableStateOf(getFormattedDate()) }
     var batteryPercentage by remember { mutableStateOf(getBatteryLevel(context)) }
+    var showAccessibilityDialog by remember { mutableStateOf(false) }
 
     val notifications by PlainNotificationService.notifications.collectAsState()
 
@@ -115,8 +119,12 @@ fun MinimalLockScreenContent(
             .pointerInput(Unit) {
                 detectTapGestures(
                     onDoubleTap = {
-                        // Double tap empty space on lock screen turns off display natively
-                        DoubleTapLockService.instance?.lockScreen()
+                        val lockService = DoubleTapLockService.instance
+                        if (lockService != null) {
+                            lockService.lockScreen()
+                        } else {
+                            showAccessibilityDialog = true
+                        }
                     }
                 )
             }
@@ -236,6 +244,39 @@ fun MinimalLockScreenContent(
                 )
             }
         }
+    }
+
+    if (showAccessibilityDialog) {
+        AlertDialog(
+            onDismissRequest = { showAccessibilityDialog = false },
+            title = { Text("Screen Lock Permission Required", color = TextMain) },
+            text = {
+                Text(
+                    "To allow double-tapping to turn off your phone screen, Android requires enabling 'Produktib O? Screen Lock' once in Accessibility Settings.",
+                    color = TextMuted,
+                    fontSize = 14.sp
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showAccessibilityDialog = false
+                        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        context.startActivity(intent)
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = TextMain, contentColor = OledBlack)
+                ) {
+                    Text("Open Settings", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showAccessibilityDialog = false }) {
+                    Text("Cancel", color = TextMuted)
+                }
+            },
+            containerColor = DarkSurface
+        )
     }
 }
 
