@@ -1,7 +1,9 @@
 package com.produktibo.launcher
 
+import android.annotation.SuppressLint
 import android.app.role.RoleManager
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -28,6 +30,7 @@ import com.produktibo.launcher.ui.SettingsScreen
 import com.produktibo.launcher.ui.isDefaultLauncher
 import com.produktibo.launcher.ui.theme.ProduktibOTheme
 import kotlinx.coroutines.launch
+import java.lang.reflect.Method
 
 class MainActivity : ComponentActivity() {
 
@@ -221,14 +224,14 @@ class MainActivity : ComponentActivity() {
                 @Suppress("DEPRECATION")
                 val statusBarService = context.getSystemService("statusbar")
                 val statusBarManagerExtra = Class.forName("android.app.StatusBarManager")
-                val collapse = statusBarManagerExtra.getMethod("collapsePanels")
+                val collapse: Method = statusBarManagerExtra.getMethod("collapsePanels")
                 collapse.invoke(statusBarService)
             } catch (e: Exception) {
                 try {
                     @Suppress("DEPRECATION")
                     val statusBarService = context.getSystemService("statusbar")
                     val statusBarManagerExtra = Class.forName("android.app.StatusBarManager")
-                    val collapse = statusBarManagerExtra.getMethod("collapse")
+                    val collapse: Method = statusBarManagerExtra.getMethod("collapse")
                     collapse.invoke(statusBarService)
                 } catch (ex: Exception) {
                     // Ignored if unavailable
