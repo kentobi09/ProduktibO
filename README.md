@@ -25,7 +25,7 @@
 
 ---
 
-## 📥 Safe Installation Tutorial
+## 📥 Installation Tutorial
 
 ### Step 1: Turn Off Play Protect
 
