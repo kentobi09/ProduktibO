@@ -263,7 +263,7 @@ fun HomeScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "Plain Notifications",
+                            text = "Notifications",
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp,
                             color = TextMain
@@ -289,13 +289,13 @@ fun HomeScreen(
                         ) {
                             Column(modifier = Modifier.padding(14.dp)) {
                                 Text(
-                                    text = "Plain Notifications Permission Required",
+                                    text = "Notification Permission Required",
                                     fontWeight = FontWeight.Bold,
                                     color = TextMain,
                                     fontSize = 13.sp
                                 )
                                 Text(
-                                    text = "Grant notification listener access to convert noisy alerts into quiet plain text.",
+                                    text = "Grant notification listener access to convert noisy alerts into quiet text.",
                                     fontSize = 12.sp,
                                     color = TextMuted,
                                     modifier = Modifier.padding(vertical = 6.dp)
