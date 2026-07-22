@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -70,15 +71,16 @@ fun HomeScreen(
     var showNotifSheet by remember { mutableStateOf(false) }
     var showAccessibilityDialog by remember { mutableStateOf(false) }
     var activeLetterIndicator by remember { mutableStateOf<Char?>(null) }
+    var barHeightPx by remember { mutableStateOf(0f) }
 
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val notifications by PlainNotificationService.notifications.collectAsState()
 
-    // Auto-fade letter indicator after 800ms
+    // Auto-fade letter indicator after 600ms
     LaunchedEffect(activeLetterIndicator) {
         if (activeLetterIndicator != null) {
-            delay(800)
+            delay(600)
             activeLetterIndicator = null
         }
     }
@@ -117,6 +119,19 @@ fun HomeScreen(
     }
 
     val alphabetLetters = remember { ('A'..'Z').toList() }
+
+    fun processScrollForY(y: Float) {
+        if (barHeightPx <= 0f) return
+        val clampedY = y.coerceIn(0f, barHeightPx)
+        val charIndex = ((clampedY / barHeightPx) * alphabetLetters.size).toInt().coerceIn(0, alphabetLetters.size - 1)
+        val targetLetter = alphabetLetters[charIndex]
+        activeLetterIndicator = targetLetter
+        alphabetIndexMap[targetLetter]?.let { index ->
+            coroutineScope.launch {
+                listState.scrollToItem(index)
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -270,7 +285,7 @@ fun HomeScreen(
                     )
                 }
             } else {
-                // Layout with Main App List + Right A-Z Alphabet Scroll Bar
+                // Layout with Main App List + Interactive A-Z Alphabet Scroll Bar
                 Row(modifier = Modifier.fillMaxSize()) {
                     LazyColumn(
                         state = listState,
@@ -300,31 +315,42 @@ fun HomeScreen(
                         }
                     }
 
-                    // A-Z Side Alphabet Fast-Scroll Bar
+                    // Interactive A-Z Side Alphabet Fast-Scroll Bar
                     Column(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .padding(start = 8.dp),
+                            .padding(start = 8.dp)
+                            .onGloballyPositioned { coordinates ->
+                                barHeightPx = coordinates.size.height.toFloat()
+                            }
+                            .pointerInput(Unit) {
+                                detectTapGestures { offset ->
+                                    processScrollForY(offset.y)
+                                }
+                            }
+                            .pointerInput(Unit) {
+                                detectVerticalDragGestures(
+                                    onDragStart = { offset -> processScrollForY(offset.y) },
+                                    onVerticalDrag = { change, _ -> processScrollForY(change.position.y) }
+                                )
+                            },
                         verticalArrangement = Arrangement.SpaceEvenly,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         alphabetLetters.forEach { letter ->
                             val isAvailable = alphabetIndexMap.containsKey(letter)
+                            val isCurrentIndicator = activeLetterIndicator == letter
+                            
                             Text(
                                 text = letter.toString(),
-                                fontSize = 9.sp,
-                                fontWeight = if (isAvailable) FontWeight.Bold else FontWeight.Normal,
-                                color = if (isAvailable) TextMain else TextMuted.copy(alpha = 0.3f),
-                                modifier = Modifier
-                                    .clickable(enabled = isAvailable) {
-                                        alphabetIndexMap[letter]?.let { targetIndex ->
-                                            activeLetterIndicator = letter
-                                            coroutineScope.launch {
-                                                listState.scrollToItem(targetIndex)
-                                            }
-                                        }
-                                    }
-                                    .padding(vertical = 1.dp, horizontal = 2.dp)
+                                fontSize = if (isCurrentIndicator) 13.sp else 9.sp,
+                                fontWeight = if (isCurrentIndicator || isAvailable) FontWeight.Bold else FontWeight.Normal,
+                                color = when {
+                                    isCurrentIndicator -> TextMain
+                                    isAvailable -> TextMuted
+                                    else -> TextMuted.copy(alpha = 0.25f)
+                                },
+                                modifier = Modifier.padding(vertical = 0.5.dp, horizontal = 2.dp)
                             )
                         }
                     }
@@ -332,7 +358,7 @@ fun HomeScreen(
             }
         }
 
-        // Center Floating Fading Letter Indicator (A-Z Scroll Indicator)
+        // Compact Center Floating Fading Letter Indicator (Sleek & Small)
         AnimatedVisibility(
             visible = activeLetterIndicator != null,
             enter = fadeIn() + scaleIn(),
@@ -340,17 +366,17 @@ fun HomeScreen(
             modifier = Modifier.align(Alignment.Center)
         ) {
             Surface(
-                color = DarkSurface.copy(alpha = 0.92f),
-                shape = RoundedCornerShape(20.dp),
+                color = DarkSurface.copy(alpha = 0.95f),
+                shape = RoundedCornerShape(12.dp),
                 modifier = Modifier
-                    .size(90.dp)
-                    .border(1.dp, TextMuted, RoundedCornerShape(20.dp))
-                    .shadow(12.dp, RoundedCornerShape(20.dp))
+                    .size(54.dp)
+                    .border(1.dp, TextMuted.copy(alpha = 0.6f), RoundedCornerShape(12.dp))
+                    .shadow(8.dp, RoundedCornerShape(12.dp))
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
                         text = activeLetterIndicator?.toString() ?: "",
-                        fontSize = 44.sp,
+                        fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextMain
                     )
