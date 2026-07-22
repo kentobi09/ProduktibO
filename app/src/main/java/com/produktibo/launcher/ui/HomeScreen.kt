@@ -77,7 +77,7 @@ fun HomeScreen(
     val coroutineScope = rememberCoroutineScope()
     val notifications by PlainNotificationService.notifications.collectAsState()
 
-    // Auto-fade letter indicator after 600ms
+    // Auto-fade letter indicator after 600ms when user stops scrolling
     LaunchedEffect(activeLetterIndicator) {
         if (activeLetterIndicator != null) {
             delay(600)
@@ -103,6 +103,23 @@ fun HomeScreen(
             val matchesSearch = searchQuery.isEmpty() || app.label.contains(searchQuery, ignoreCase = true)
 
             !isHiddenBySocialShield && !isHiddenByGamesShield && !isCustomHidden && matchesSearch
+        }
+    }
+
+    // Track letter of currently visible app at top of list while user scrolls main screen
+    val currentFirstVisibleLetter by remember {
+        derivedStateOf {
+            val visibleIndex = listState.firstVisibleItemIndex
+            if (visibleIndex in filteredApps.indices) {
+                filteredApps[visibleIndex].label.firstOrNull()?.uppercaseChar()
+            } else null
+        }
+    }
+
+    // Show fading letter indicator dynamically when user is scrolling the main screen
+    LaunchedEffect(currentFirstVisibleLetter, listState.isScrollInProgress) {
+        if (listState.isScrollInProgress && currentFirstVisibleLetter != null) {
+            activeLetterIndicator = currentFirstVisibleLetter
         }
     }
 
@@ -358,7 +375,7 @@ fun HomeScreen(
             }
         }
 
-        // Compact Center Floating Fading Letter Indicator (Sleek & Small)
+        // Compact Center Floating Fading Letter Indicator (Shows on screen scroll & sidebar drag)
         AnimatedVisibility(
             visible = activeLetterIndicator != null,
             enter = fadeIn() + scaleIn(),
