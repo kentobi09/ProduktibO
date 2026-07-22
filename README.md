@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="https://github.com/kentobi09/ProduktibO/blob/main/app/src/main/res/drawable/ic_launcher.xml" alt="Produktib O Logo" width="120" height="120" />
+</div>
+
 # Produktib O? — Minimalist Home Launcher for Android
 
 > *"Produktib O? — It's productive, make every minute count."*
@@ -12,7 +16,7 @@
 
 - 📱 **Text-Only Minimalist Launcher**: Replaces loud, colorful app icons with clean, distraction-free typography.
 - 🛡️ **Anti-Doomscroll Social Shield**: Automatically suppresses high-friction social feeds (**TikTok, X/Twitter, Facebook, YouTube, Threads, Instagram, Snapchat, Reddit**).
-- 🎮 **Addictive Online Games Shield**: Auto-detects and suppresses high-dopamine mobile & online games (**Mobile Legends, Roblox, PUBG, Genshin, CoD Mobile, Free Fire**, and all Play Store game category apps).
+- 🎮 **Addictive Online Games Shield**: Auto-detects and suppresses high-dopamine mobile & online games (**Mobile Legends, Roblox, PUBG, Genshin, CoD Mobile, Free Fire**, and all Play Store games).
 - 📜 **Plain Text Notifications**: Swiping down from the top reveals a quiet, monochrome notification list—no red badges, flashing cards, or distracting thumbnail previews.
 - 🔒 **Opt-In Double-Tap to Lock**: Enable in Settings to turn off your phone screen natively with a quick double-tap on empty space (`AccessibilityService`).
 - 🔋 **Immersive OLED UI**: Hides system clutter in edge-to-edge OLED dark mode with in-app battery percentage and time indicators.
