@@ -17,7 +17,7 @@
 - 📱 **Text-Only Minimalist Launcher**: Replaces loud, colorful app icons with clean, distraction-free typography.
 - 🔒 **Minimal OLED Lock Screen Overlay**: Pitch-black OLED clock (`72.sp`), date, battery, and quiet text notifications over your lock screen with swipe-up unlock.
 - 🛡️ **Anti-Doomscroll Social Shield**: Automatically suppresses high-friction social feeds (**TikTok, X/Twitter, Facebook, YouTube, Threads, Instagram, Snapchat, Reddit**).
-- 🎮 **Addictive Online Games Shield**: Auto-detects and suppresses high-dopamine mobile & online games (**Mobile Legends, Roblox, PUBG, Genshin, CoD Mobile, Free Fire**, and all Play Store game[...]
+- 🎮 **Addictive Online Games Shield**: Auto-detects and suppresses high-dopamine mobile & online games (**Mobile Legends, Roblox, PUBG, Genshin, CoD Mobile, Free Fire**, and all Play Store games).
 - 📜 **Quiet Text Notifications**: Swiping down reveals a quiet, monochrome notification list—no red badges, flashing cards, or distracting thumbnail previews.
 - 👆 **Double-Tap Screen Lock**: Turn off your phone screen natively by double-tapping empty space (`AccessibilityService`), enabled by default.
 - 🔋 **Immersive OLED UI**: Hides system clutter in edge-to-edge OLED dark mode with in-app battery percentage and time indicators.
@@ -25,56 +25,34 @@
 
 ---
 
-## 🚨 ⚠️ Google Play Store Security Warning
-
-**⚡ Important Notice**: When you attempt to download and install Produktib O? directly from this GitHub repository (as an APK file), **Google Play Store may display a security warning** and block the installation, stating that the app is unverified or from an unknown source. 
-
-### 🛡️ Your App is Safe — Here's Why:
-
-✅ **No Malware**: Produktib O? is **100% open-source** and completely malware-free. You can inspect the entire source code on this repository.
-
-✅ **No Hidden Tracking**: The app does **NOT** collect personal data, analytics, or track your behavior.
-
-✅ **Transparent Permissions**: Every permission we request is clearly documented and used only for the features you see.
-
-**The warning appears because:**
-- Google Play Store hasn't verified this app yet (it's distributed via GitHub)
-- Sideloading APKs (installing from outside the Play Store) triggers Google Play's protective warnings
-- This is a standard security measure by Google, not a sign of actual danger
-
----
-
 ## 📥 Safe Installation Tutorial
 
-### Step 1: Allow Google Play Store to Install Unknown Apps (Temporarily)
+### Step 1: Turn Off Play Protect
+
 1. Open **Google Play Store** on your Android phone
 2. Tap your **Profile icon** (top-right corner)
-3. Go to **Settings** → **Apps and devices**
-4. Scroll down and tap **Manage "Manage all applications"**
-5. Look for an option like **"Allow installation of apps from unknown sources"** or **"Install unknown apps"**
-6. Tap it and toggle **ON** to temporarily allow installations from GitHub
-7. ⚠️ **Only keep this enabled while installing** — disable it immediately after
-
-**Alternative (Faster):**
-- When Play Store blocks the installation, it will offer a prompt
-- Tap **"Settings"** in that prompt and enable **"Allow from this source"**
+3. Go to **Settings** → **Google Play Protect**
+4. Toggle **Play Protect scanning** to **OFF**
+5. Confirm the prompt
 
 ### Step 2: Download & Install Produktib O?
+
 1. Click the [**Download APK Badge**](https://github.com/kentobi09/ProduktibO/releases/download/v1.1.0/ProduktibO-v1.1.0.apk) at the top of this page
-2. Once downloaded, tap the `.apk` file
-3. If prompted with a security warning from Play Store, tap **"Install anyway"** or **"Continue"**
-4. The app will install — the warning is just Google Play being protective
-5. Open **Produktib O?** and set it as your default launcher
+2. Once downloaded, tap the `.apk` file in your downloads
+3. Tap **"Install"** — the app will install without warnings
+4. Open **Produktib O?** and set it as your default launcher
 
-### Step 3: Restore Your Security Settings (Highly Recommended)
-1. Return to **Google Play Store** → **Profile icon** → **Settings** → **Apps and devices**
-2. Navigate back to **"Allow installation of apps from unknown sources"**
-3. Toggle **OFF** to return to normal protection
-4. ✅ Your phone is now secure again while keeping Produktib O? installed
+### Step 3: Turn Play Protect Back On (Highly Recommended)
 
-### 🔄 Why Disable After Installation?
-- **Keeping it ON** leaves your phone vulnerable to accidental installation of unwanted apps
-- **Disabling it** restores Google Play's protective shield
+1. Return to **Google Play Store** → **Profile icon** → **Settings** → **Google Play Protect**
+2. Toggle **Play Protect scanning** back to **ON**
+3. ✅ Your phone is now secure again while keeping Produktib O? installed
+
+### 🔄 Why Turn Off Play Protect During Installation?
+
+- **Play Protect** scans all apps and may flag sideloaded APKs as unverified
+- Temporarily disabling it allows smooth installation from GitHub
+- **Re-enabling it** after installation restores your phone's security shield
 - This is the **best practice** for sideloading apps safely
 
 ---
