@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.png" width="128" alt="Produktib O? Logo" />
+</p>
+
 # Produktib O? — Minimalist Text Launcher for Android
 
 > *"Produktib O? — It's productive, make every minute count."*
@@ -24,7 +28,7 @@
 
 1. **Download APK**: Click the [**Download APK Badge**](https://github.com/kentobi09/ProduktibO/releases/download/v1.0.0/ProduktibO-v1.0.0.apk) above on your Android phone.
 2. **Install**: Tap the downloaded `.apk` file to install it.
-3. **Set Default**: Open **Produktib O?** and tap **Set Default** on the top banner to set it as your main home screen!
+3. **Set Default**: Open **Produktib O?** and respond to the one-time system default prompt, or configure anytime in Settings.
 
 ---
 

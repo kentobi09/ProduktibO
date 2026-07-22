@@ -52,24 +52,22 @@ fun HomeScreen(
     autoHideGames: Boolean,
     doubleTapLockEnabled: Boolean,
     hiddenApps: Set<String>,
-    onOpenSettings: () -> Unit,
-    onRequestSetDefault: () -> Unit
+    onOpenSettings: () -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var currentTime by remember { mutableStateOf(getFormattedTime()) }
     var currentDate by remember { mutableStateOf(getFormattedDate()) }
-    var isDefault by remember { mutableStateOf(isDefaultLauncher(context)) }
     var batteryPercentage by remember { mutableStateOf(getBatteryLevel(context)) }
     var showNotifSheet by remember { mutableStateOf(false) }
+    var showAccessibilityDialog by remember { mutableStateOf(false) }
 
     val notifications by PlainNotificationService.notifications.collectAsState()
 
-    // Live Ticker for Time, Battery Level & Default Status
+    // Live Ticker for Time & Battery Level
     LaunchedEffect(Unit) {
         while (true) {
             currentTime = getFormattedTime()
             currentDate = getFormattedDate()
-            isDefault = isDefaultLauncher(context)
             batteryPercentage = getBatteryLevel(context)
             kotlinx.coroutines.delay(2000)
         }
@@ -94,7 +92,12 @@ fun HomeScreen(
                 detectTapGestures(
                     onDoubleTap = {
                         if (doubleTapLockEnabled) {
-                            DoubleTapLockService.instance?.lockScreen()
+                            val lockService = DoubleTapLockService.instance
+                            if (lockService != null) {
+                                lockService.lockScreen()
+                            } else {
+                                showAccessibilityDialog = true
+                            }
                         }
                     }
                 )
@@ -134,46 +137,6 @@ fun HomeScreen(
                     fontWeight = FontWeight.Medium,
                     color = TextMuted
                 )
-            }
-
-            // Banner Prompt if NOT default launcher yet
-            if (!isDefault) {
-                Surface(
-                    color = DarkSurface,
-                    shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp)
-                        .border(1.dp, TextMuted, RoundedCornerShape(12.dp))
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(14.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "Set as Default Home Screen",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp,
-                                color = TextMain
-                            )
-                            Text(
-                                text = "Tap button to set Produktib O? as main launcher",
-                                fontSize = 12.sp,
-                                color = TextMuted
-                            )
-                        }
-                        Button(
-                            onClick = onRequestSetDefault,
-                            colors = ButtonDefaults.buttonColors(containerColor = TextMain, contentColor = OledBlack)
-                        ) {
-                            Text("Set Default", fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                        }
-                    }
-                }
             }
 
             // Minimal Header Clock & Date
@@ -416,6 +379,39 @@ fun HomeScreen(
                 }
             }
         }
+    }
+
+    if (showAccessibilityDialog) {
+        AlertDialog(
+            onDismissRequest = { showAccessibilityDialog = false },
+            title = { Text("Screen Lock Permission Required", color = TextMain) },
+            text = {
+                Text(
+                    "To allow double-tapping to turn off your phone screen, Android requires enabling 'Produktib O? Screen Lock' once in Accessibility Settings.",
+                    color = TextMuted,
+                    fontSize = 14.sp
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showAccessibilityDialog = false
+                        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        context.startActivity(intent)
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = TextMain, contentColor = OledBlack)
+                ) {
+                    Text("Open Settings", fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showAccessibilityDialog = false }) {
+                    Text("Cancel", color = TextMuted)
+                }
+            },
+            containerColor = DarkSurface
+        )
     }
 }
 

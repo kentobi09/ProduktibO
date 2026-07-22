@@ -29,6 +29,7 @@ import com.produktibo.launcher.ui.HomeScreen
 import com.produktibo.launcher.ui.SettingsScreen
 import com.produktibo.launcher.ui.isDefaultLauncher
 import com.produktibo.launcher.ui.theme.ProduktibOTheme
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.lang.reflect.Method
 
@@ -51,6 +52,15 @@ class MainActivity : ComponentActivity() {
 
         appRepository = AppRepository(this)
         prefsManager = PreferencesManager(this)
+
+        // Check if first-time launch prompt is needed
+        lifecycleScope.launch {
+            val hasPrompted = prefsManager.hasPromptedDefaultLauncher.first()
+            if (!hasPrompted && !isDefaultLauncher(this@MainActivity)) {
+                prefsManager.setHasPromptedDefaultLauncher(true)
+                requestDefaultHomeLauncher()
+            }
+        }
 
         setContent {
             ProduktibOTheme {
@@ -101,8 +111,7 @@ class MainActivity : ComponentActivity() {
                             autoHideGames = autoHideGames,
                             doubleTapLockEnabled = doubleTapLockEnabled,
                             hiddenApps = hiddenApps,
-                            onOpenSettings = { isSettingsOpen = true },
-                            onRequestSetDefault = { requestDefaultHomeLauncher() }
+                            onOpenSettings = { isSettingsOpen = true }
                         )
                     }
                 }
@@ -224,14 +233,14 @@ class MainActivity : ComponentActivity() {
                 @Suppress("DEPRECATION")
                 val statusBarService = context.getSystemService("statusbar")
                 val statusBarManagerExtra = Class.forName("android.app.StatusBarManager")
-                val collapse: Method = statusBarManagerExtra.getMethod("collapsePanels")
+                val collapse = statusBarManagerExtra.getMethod("collapsePanels")
                 collapse.invoke(statusBarService)
             } catch (e: Exception) {
                 try {
                     @Suppress("DEPRECATION")
                     val statusBarService = context.getSystemService("statusbar")
                     val statusBarManagerExtra = Class.forName("android.app.StatusBarManager")
-                    val collapse: Method = statusBarManagerExtra.getMethod("collapse")
+                    val collapse = statusBarManagerExtra.getMethod("collapse")
                     collapse.invoke(statusBarService)
                 } catch (ex: Exception) {
                     // Ignored if unavailable
