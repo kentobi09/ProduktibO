@@ -1,4 +1,4 @@
-# Produktib O? — Minimalist Text Launcher for Android
+# Produktib O? — Minimalist App Launcher for Android
 
 > *"Produktib O? — It's productive, make every minute count."*
 
