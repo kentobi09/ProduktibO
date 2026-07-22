@@ -6,6 +6,7 @@ data class AppInfo(
     val label: String,
     val packageName: String,
     val isSocialMedia: Boolean = false,
+    val isGame: Boolean = false,
     val isHidden: Boolean = false,
     val dailyLimitMinutes: Int? = null,
     val timeUsedTodaySeconds: Long = 0,

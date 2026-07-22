@@ -1,9 +1,7 @@
 package com.produktibo.launcher
 
-import android.annotation.SuppressLint
 import android.app.role.RoleManager
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -30,7 +28,6 @@ import com.produktibo.launcher.ui.SettingsScreen
 import com.produktibo.launcher.ui.isDefaultLauncher
 import com.produktibo.launcher.ui.theme.ProduktibOTheme
 import kotlinx.coroutines.launch
-import java.lang.reflect.Method
 
 class MainActivity : ComponentActivity() {
 
@@ -62,6 +59,7 @@ class MainActivity : ComponentActivity() {
                     var appList by remember { mutableStateOf<List<AppInfo>>(emptyList()) }
 
                     val autoHideSocial by prefsManager.autoHideSocial.collectAsState(initial = true)
+                    val autoHideGames by prefsManager.autoHideGames.collectAsState(initial = true)
                     val doubleTapLockEnabled by prefsManager.doubleTapLockEnabled.collectAsState(initial = false)
                     val hiddenApps by prefsManager.hiddenAppsSet.collectAsState(initial = emptySet())
 
@@ -74,10 +72,14 @@ class MainActivity : ComponentActivity() {
                             context = this,
                             appList = appList,
                             autoHideSocial = autoHideSocial,
+                            autoHideGames = autoHideGames,
                             doubleTapLockEnabled = doubleTapLockEnabled,
                             hiddenApps = hiddenApps,
                             onToggleSocialShield = { enabled ->
                                 lifecycleScope.launch { prefsManager.setAutoHideSocial(enabled) }
+                            },
+                            onToggleGamesShield = { enabled ->
+                                lifecycleScope.launch { prefsManager.setAutoHideGames(enabled) }
                             },
                             onToggleDoubleTapLock = { enabled ->
                                 lifecycleScope.launch { prefsManager.setDoubleTapLockEnabled(enabled) }
@@ -93,6 +95,7 @@ class MainActivity : ComponentActivity() {
                             context = this,
                             appList = appList,
                             autoHideSocial = autoHideSocial,
+                            autoHideGames = autoHideGames,
                             doubleTapLockEnabled = doubleTapLockEnabled,
                             hiddenApps = hiddenApps,
                             onOpenSettings = { isSettingsOpen = true },
@@ -215,17 +218,17 @@ class MainActivity : ComponentActivity() {
     companion object {
         fun collapseSystemStatusBar(context: Context) {
             try {
-                @SuppressLint("WrongConstant")
+                @Suppress("DEPRECATION")
                 val statusBarService = context.getSystemService("statusbar")
                 val statusBarManagerExtra = Class.forName("android.app.StatusBarManager")
-                val collapse: Method = statusBarManagerExtra.getMethod("collapsePanels")
+                val collapse = statusBarManagerExtra.getMethod("collapsePanels")
                 collapse.invoke(statusBarService)
             } catch (e: Exception) {
                 try {
-                    @SuppressLint("WrongConstant")
+                    @Suppress("DEPRECATION")
                     val statusBarService = context.getSystemService("statusbar")
                     val statusBarManagerExtra = Class.forName("android.app.StatusBarManager")
-                    val collapse: Method = statusBarManagerExtra.getMethod("collapse")
+                    val collapse = statusBarManagerExtra.getMethod("collapse")
                     collapse.invoke(statusBarService)
                 } catch (ex: Exception) {
                     // Ignored if unavailable

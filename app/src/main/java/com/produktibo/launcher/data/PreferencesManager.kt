@@ -14,6 +14,7 @@ class PreferencesManager(private val context: Context) {
 
     companion object {
         val AUTO_HIDE_SOCIAL = booleanPreferencesKey("auto_hide_social")
+        val AUTO_HIDE_GAMES = booleanPreferencesKey("auto_hide_games")
         val DOUBLE_TAP_LOCK_ENABLED = booleanPreferencesKey("double_tap_lock_enabled")
         val TIME_FORMAT = stringPreferencesKey("time_format") // "24" or "12"
         val THEME_MODE = stringPreferencesKey("theme_mode") // "oled", "paper", "slate"
@@ -22,6 +23,10 @@ class PreferencesManager(private val context: Context) {
 
     val autoHideSocial: Flow<Boolean> = context.dataStore.data.map { prefs ->
         prefs[AUTO_HIDE_SOCIAL] ?: true
+    }
+
+    val autoHideGames: Flow<Boolean> = context.dataStore.data.map { prefs ->
+        prefs[AUTO_HIDE_GAMES] ?: true
     }
 
     val doubleTapLockEnabled: Flow<Boolean> = context.dataStore.data.map { prefs ->
@@ -44,6 +49,12 @@ class PreferencesManager(private val context: Context) {
     suspend fun setAutoHideSocial(enabled: Boolean) {
         context.dataStore.edit { prefs ->
             prefs[AUTO_HIDE_SOCIAL] = enabled
+        }
+    }
+
+    suspend fun setAutoHideGames(enabled: Boolean) {
+        context.dataStore.edit { prefs ->
+            prefs[AUTO_HIDE_GAMES] = enabled
         }
     }
 

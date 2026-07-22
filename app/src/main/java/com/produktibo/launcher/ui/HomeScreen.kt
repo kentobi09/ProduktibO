@@ -49,6 +49,7 @@ fun HomeScreen(
     context: Context,
     appList: List<AppInfo>,
     autoHideSocial: Boolean,
+    autoHideGames: Boolean,
     doubleTapLockEnabled: Boolean,
     hiddenApps: Set<String>,
     onOpenSettings: () -> Unit,
@@ -60,7 +61,6 @@ fun HomeScreen(
     var isDefault by remember { mutableStateOf(isDefaultLauncher(context)) }
     var batteryPercentage by remember { mutableStateOf(getBatteryLevel(context)) }
     var showNotifSheet by remember { mutableStateOf(false) }
-    var showAccessibilityDialog by remember { mutableStateOf(false) }
 
     val notifications by PlainNotificationService.notifications.collectAsState()
 
@@ -75,13 +75,14 @@ fun HomeScreen(
         }
     }
 
-    val filteredApps = remember(appList, searchQuery, autoHideSocial, hiddenApps) {
+    val filteredApps = remember(appList, searchQuery, autoHideSocial, autoHideGames, hiddenApps) {
         appList.filter { app ->
             val isHiddenBySocialShield = autoHideSocial && app.isSocialMedia
+            val isHiddenByGamesShield = autoHideGames && app.isGame
             val isCustomHidden = hiddenApps.contains(app.packageName)
             val matchesSearch = searchQuery.isEmpty() || app.label.contains(searchQuery, ignoreCase = true)
 
-            !isHiddenBySocialShield && !isCustomHidden && matchesSearch
+            !isHiddenBySocialShield && !isHiddenByGamesShield && !isCustomHidden && matchesSearch
         }
     }
 
@@ -93,12 +94,7 @@ fun HomeScreen(
                 detectTapGestures(
                     onDoubleTap = {
                         if (doubleTapLockEnabled) {
-                            val lockService = DoubleTapLockService.instance
-                            if (lockService != null) {
-                                lockService.lockScreen()
-                            } else {
-                                showAccessibilityDialog = true
-                            }
+                            DoubleTapLockService.instance?.lockScreen()
                         }
                     }
                 )
@@ -420,39 +416,6 @@ fun HomeScreen(
                 }
             }
         }
-    }
-
-    if (showAccessibilityDialog) {
-        AlertDialog(
-            onDismissRequest = { showAccessibilityDialog = false },
-            title = { Text("Screen Lock Permission Required", color = TextMain) },
-            text = {
-                Text(
-                    "To allow double-tapping to turn off your phone screen, Android requires enabling 'Produktib O? Screen Lock' once in Accessibility Settings.",
-                    color = TextMuted,
-                    fontSize = 14.sp
-                )
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        showAccessibilityDialog = false
-                        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        context.startActivity(intent)
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = TextMain, contentColor = OledBlack)
-                ) {
-                    Text("Open Settings", fontWeight = FontWeight.Bold)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showAccessibilityDialog = false }) {
-                    Text("Cancel", color = TextMuted)
-                }
-            },
-            containerColor = DarkSurface
-        )
     }
 }
 

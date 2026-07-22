@@ -2,14 +2,15 @@
 
 > *"Produktib O? — It's productive, make every minute count."*
 
-**Produktib O?** (derived from the Tagalog word *produktibo oh?* meaning *"It's productive!"* in a persuasive, affirming tone) is an aesthetic minimalist text launcher for Android designed to eliminate doomscrolling, reduce dopamine triggers, and maximize intentionality.
+**Produktib O?** (derived from the Tagalog word *produktibo* meaning *"It's productive!"* in a persuasive, affirming tone) is an aesthetic minimalist text launcher for Android designed to eliminate doomscrolling, reduce dopamine triggers, and maximize intentionality.
 
 ---
 
 ## ✨ Features
 
 - 📱 **Text-Only Minimalist Launcher**: Replaces loud, colorful app icons with clean, distraction-free typography.
-- 🛡️ **Anti-Doomscroll Shield**: Toggleable master filter that automatically suppresses high-friction social feeds (**TikTok, X/Twitter, Facebook, YouTube, Threads, Instagram, Snapchat, Reddit**).
+- 🛡️ **Anti-Doomscroll Social Shield**: Toggleable master filter that automatically suppresses high-friction social feeds (**TikTok, X/Twitter, Facebook, YouTube, Threads, Instagram, Snapchat, Reddit**).
+- 🎮 **Addictive Online Games Shield**: Auto-detects and suppresses high-dopamine mobile & online games (**Mobile Legends, Roblox, PUBG, Genshin, CoD Mobile, Free Fire**, and all Play Store game category apps).
 - 📜 **Plain Text Notifications**: Swiping down from the top reveals a quiet, monochrome notification list—no red badges, flashing cards, or distracting thumbnail previews.
 - 🔒 **Opt-In Double-Tap to Lock**: Enable in Settings to turn off your phone screen natively with a quick double-tap on empty space (`AccessibilityService`).
 - 🔋 **Immersive OLED UI**: Hides system clutter in edge-to-edge OLED dark mode with in-app battery percentage and time indicators.

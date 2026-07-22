@@ -29,9 +29,11 @@ fun SettingsScreen(
     context: Context,
     appList: List<AppInfo>,
     autoHideSocial: Boolean,
+    autoHideGames: Boolean,
     doubleTapLockEnabled: Boolean,
     hiddenApps: Set<String>,
     onToggleSocialShield: (Boolean) -> Unit,
+    onToggleGamesShield: (Boolean) -> Unit,
     onToggleDoubleTapLock: (Boolean) -> Unit,
     onToggleHideApp: (String) -> Unit,
     onRequestSetDefault: () -> Unit,
@@ -87,7 +89,7 @@ fun SettingsScreen(
                 color = TextMain
             )
             Text(
-                text = "Customize anti-doomscroll shield, gestures & visibility.",
+                text = "Customize anti-doomscroll shield, games filter, gestures & visibility.",
                 fontSize = 13.sp,
                 color = TextMuted,
                 modifier = Modifier.padding(top = 4.dp, bottom = 20.dp)
@@ -136,7 +138,79 @@ fun SettingsScreen(
                     }
                 }
 
-                // Section 2: Double-Tap to Lock Screen Toggle
+                // Section 2: Master Social Media Shield Toggle
+                item {
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = DarkSurface),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Auto-Hide Social Media Apps",
+                                    fontWeight = FontWeight.Medium,
+                                    color = TextMain,
+                                    fontSize = 14.sp
+                                )
+                                Text(
+                                    text = "Automatically suppresses TikTok, X, Facebook, Threads, YouTube, Instagram, Snapchat & Reddit",
+                                    fontSize = 12.sp,
+                                    color = TextMuted,
+                                    modifier = Modifier.padding(top = 2.dp)
+                                )
+                            }
+                            Switch(
+                                checked = autoHideSocial,
+                                onCheckedChange = onToggleSocialShield
+                            )
+                        }
+                    }
+                }
+
+                // Section 3: Master Games Shield Toggle (NEW)
+                item {
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = DarkSurface),
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = "Auto-Hide Addictive Online Video Games",
+                                    fontWeight = FontWeight.Medium,
+                                    color = TextMain,
+                                    fontSize = 14.sp
+                                )
+                                Text(
+                                    text = "Automatically suppresses Mobile Legends, Roblox, PUBG, Genshin, CoD Mobile, Free Fire, and all Play Store game category apps",
+                                    fontSize = 12.sp,
+                                    color = TextMuted,
+                                    modifier = Modifier.padding(top = 2.dp)
+                                )
+                            }
+                            Switch(
+                                checked = autoHideGames,
+                                onCheckedChange = onToggleGamesShield
+                            )
+                        }
+                    }
+                }
+
+                // Section 4: Double-Tap to Lock Screen Toggle
                 item {
                     Card(
                         colors = CardDefaults.cardColors(containerColor = DarkSurface),
@@ -177,43 +251,7 @@ fun SettingsScreen(
                     }
                 }
 
-                // Section 3: Master Social Media Shield Toggle
-                item {
-                    Card(
-                        colors = CardDefaults.cardColors(containerColor = DarkSurface),
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = "Auto-Hide Social Media Apps",
-                                    fontWeight = FontWeight.Medium,
-                                    color = TextMain,
-                                    fontSize = 14.sp
-                                )
-                                Text(
-                                    text = "Automatically suppresses TikTok, X, Facebook, Threads, YouTube, Instagram, Snapchat & Reddit",
-                                    fontSize = 12.sp,
-                                    color = TextMuted,
-                                    modifier = Modifier.padding(top = 2.dp)
-                                )
-                            }
-                            Switch(
-                                checked = autoHideSocial,
-                                onCheckedChange = onToggleSocialShield
-                            )
-                        }
-                    }
-                }
-
-                // Section 4: Custom App Visibility List Header
+                // Section 5: Custom App Visibility List Header
                 item {
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
@@ -239,6 +277,8 @@ fun SettingsScreen(
                             Text(text = app.label, color = TextMain, fontSize = 16.sp)
                             if (app.isSocialMedia) {
                                 Text(text = "Social Doomscroll Tag", color = TextMuted, fontSize = 11.sp)
+                            } else if (app.isGame) {
+                                Text(text = "Game Category Tag", color = TextMuted, fontSize = 11.sp)
                             }
                         }
                         Checkbox(
