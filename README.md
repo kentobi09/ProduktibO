@@ -12,22 +12,22 @@
 
 ---
 
-## ✨ Features
+##  Features
 
-- 📱 **Text-Only Minimalist Launcher**: Replaces loud, colorful app icons with clean, distraction-free typography.
-- 🔤 **Interactive A-Z Fast-Scroll Bar**: Slide your finger along the A-Z sidebar with a real-time reactive letter indicator for instant navigation.
-- 🎯 **First-Install App Onboarding Dialog**: 1-time setup pop-up on first launch to easily choose which apps to display in 10 seconds.
-- 🔍 **Space-Saving Search & Settings Search**: Ultra-thin single-line search field on home screen and instant app search inside Settings.
-- 👈 **Edge Swipe-to-Back Gesture**: Swipe from the left edge in Settings to return smoothly to the home screen.
-- 🔒 **Minimal OLED Lock Screen Overlay**: Pitch-black OLED clock (`72.sp`), date, battery, and quiet text notifications over your lock screen with swipe-up unlock.
-- 🛡️ **Anti-Doomscroll Social & Game Shields**: Automatically suppresses social media feeds (**TikTok, X, Facebook, YouTube, Threads, Instagram, Snapchat, Reddit**) and online games (**Mobile Legends, Roblox, PUBG, Genshin, CoD Mobile, Free Fire**).
-- 📜 **Quiet Text Notifications**: Swiping down reveals a quiet, monochrome notification list.
-- 👆 **Double-Tap Screen Lock**: Turn off your phone screen natively by double-tapping empty space (`AccessibilityService`).
-- 🔓 **Fail-Safe Launcher Reset**: Easily change or switch back to your stock launcher anytime directly inside **Settings** -> **Change / Reset Default Launcher**.
+-  **Text-Only Minimalist Launcher**: Replaces loud, colorful app icons with clean, distraction-free typography.
+-  **Interactive A-Z Fast-Scroll Bar**: Slide your finger along the A-Z sidebar with a real-time reactive letter indicator for instant navigation.
+-  **First-Install App Onboarding Dialog**: 1-time setup pop-up on first launch to easily choose which apps to display in 10 seconds.
+-  **Space-Saving Search & Settings Search**: Ultra-thin single-line search field on home screen and instant app search inside Settings.
+-  **Edge Swipe-to-Back Gesture**: Swipe from the left edge in Settings to return smoothly to the home screen.
+-  **Minimal OLED Lock Screen Overlay**: Pitch-black OLED clock (`72.sp`), date, battery, and quiet text notifications over your lock screen with swipe-up unlock.
+-  **Anti-Doomscroll Social & Game Shields**: Automatically suppresses social media feeds (**TikTok, X, Facebook, YouTube, Threads, Instagram, Snapchat, Reddit**) and online games (**Mobile Legends, Roblox, PUBG, Genshin, CoD Mobile, Free Fire**).
+-  **Quiet Text Notifications**: Swiping down reveals a quiet, monochrome notification list.
+-  **Double-Tap Screen Lock**: Turn off your phone screen natively by double-tapping empty space (`AccessibilityService`).
+-  **Fail-Safe Launcher Reset**: Easily change or switch back to your stock launcher anytime directly inside **Settings** -> **Change / Reset Default Launcher**.
 
 ---
 
-## 📥 Quick Download & Installation
+##  Quick Download & Installation
 
 1. **Download APK**: Click the [**Download APK Badge**](https://github.com/kentobi09/ProduktibO/releases/download/v1.2.0/ProduktibO-v1.2.0.apk) above on your Android phone.
 2. **Install**: Tap the downloaded `.apk` file to install it.
@@ -35,7 +35,7 @@
 
 ---
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 - **Language**: Kotlin 1.9
 - **UI Framework**: Jetpack Compose (Material 3)
@@ -47,7 +47,7 @@
 
 ---
 
-## 🚀 Building from Source
+##  Building from Source
 
 ### Prerequisites
 
@@ -70,7 +70,7 @@
 
 ---
 
-## 🔒 Permissions Used
+##  Permissions Used
 
 - **`CATEGORY_HOME`**: Allows the app to function as a primary Android Home Launcher.
 - **`AccessibilityService`** *(Optional)*: Used exclusively for locking the screen upon double-tapping empty space.
