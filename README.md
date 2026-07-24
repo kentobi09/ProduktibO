@@ -16,9 +16,6 @@
 
 -  **Text-Only Minimalist Launcher**: Replaces loud, colorful app icons with clean, distraction-free typography.
 -  **Interactive A-Z Fast-Scroll Bar**: Slide your finger along the A-Z sidebar with a real-time reactive letter indicator for instant navigation.
--  **First-Install App Onboarding Dialog**: 1-time setup pop-up on first launch to easily choose which apps to display in 10 seconds.
--  **Space-Saving Search & Settings Search**: Ultra-thin single-line search field on home screen and instant app search inside Settings.
--  **Edge Swipe-to-Back Gesture**: Swipe from the left edge in Settings to return smoothly to the home screen.
 -  **Minimal OLED Lock Screen Overlay**: Pitch-black OLED clock (`72.sp`), date, battery, and quiet text notifications over your lock screen with swipe-up unlock.
 -  **Anti-Doomscroll Social & Game Shields**: Automatically suppresses social media feeds (**TikTok, X, Facebook, YouTube, Threads, Instagram, Snapchat, Reddit**) and online games (**Mobile Legends, Roblox, PUBG, Genshin, CoD Mobile, Free Fire**).
 -  **Quiet Text Notifications**: Swiping down reveals a quiet, monochrome notification list.
