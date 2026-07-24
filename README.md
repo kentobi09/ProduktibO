@@ -2,7 +2,7 @@
   <img src="logo.png" width="128" alt="Produktib O? Logo" />
 </p>
 
-# Produktib O? — Minimalist HomeLauncher & Lock Screen for Android
+# Produktib O? — Minimalist Home Launcher & Lock Screen for Android
 
 > *"Produktib O? — It's productive, make every minute count."*
 
